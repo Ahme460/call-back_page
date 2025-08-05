@@ -65,15 +65,62 @@
 <body>
 
   <div class="card">
-    <div class="success-icon">
+
+    <div class="success-icon" id="payment-icon" >
       <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2l4 -4m5 2a9 9 0 11-18 0a9 9 0 0118 0z"/>
       </svg>
     </div>
+
     <h1>تم الدفع بنجاح!</h1>
     <p>شكراً لك. لقد تمت عملية الدفع بنجاح.</p>
-    <a href="/" class="button">الرجوع للرئيسية</a>
+    <!-- <a href="/" class="button">الرجوع للرئيسية</a> -->
   </div>
+
+  <script>
+    window.addEventListener("DOMContentLoaded", () => {
+      const params = new URLSearchParams(window.location.search);
+      const transactionId = params.get("transactionId");
+     // const transactionId = "b1210a39-218a-461c-8521-5aa3c8155a80"
+      if (transactionId) {
+        console.log("Transaction ID:", transactionId);
+
+        // إرسال للـ backend
+        fetch("https://api.dinenorder.qa/customer/api/v1/status/transaction", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({ transactionId })
+        })
+        .then(res => res.json())
+        .then(data => {
+          console.log("رد السيرفر:", data);
+          console.log(data['status']);
+
+          if (data.status){
+            document.querySelector('h1').innerText="payment transaction success";
+            document.querySelector('p').innerText='thank you finished transaction successful payment';
+          } else{
+              const iconDiv = document.getElementById("payment-icon");
+              iconDiv.innerHTML = `
+                <svg fill="none" stroke="red" stroke-width="2" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+                </svg>
+              `;
+            document.querySelector('h1').innerText ="payment transaction field";
+            document.querySelector('p').innerText ='thank you finshed transcation field payment try again later';
+          }
+        })
+        .catch(error => {
+          console.error("خطأ أثناء إرسال المعاملة:", error);
+        });
+      } else {
+        console.warn("لم يتم العثور على transactionId في الرابط");
+      }
+    }
+  );
+  </script>
 
 </body>
 </html>
