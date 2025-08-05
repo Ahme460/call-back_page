@@ -81,6 +81,9 @@
     window.addEventListener("DOMContentLoaded", () => {
       const params = new URLSearchParams(window.location.search);
       const transactionId = params.get("transactionId");
+      for (const [key, value] of params.entries()) {
+  console.log(`${key}: ${value}`);
+}
      // const transactionId = "b1210a39-218a-461c-8521-5aa3c8155a80"
       if (transactionId) {
         console.log("Transaction ID:", transactionId);
