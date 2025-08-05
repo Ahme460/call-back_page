@@ -80,7 +80,7 @@
   <script>
     window.addEventListener("DOMContentLoaded", () => {
       const params = new URLSearchParams(window.location.search);
-      const transactionId = params.get("transactionId");
+      const transactionId = params.get("transId");
       for (const [key, value] of params.entries()) {
   console.log(`${key}: ${value}`);
 }
