@@ -82,7 +82,7 @@
 
       if (!transactionId) {
         iconDiv.innerHTML = `
-          <svg fill="none" stroke="gray" stroke-width="2" viewBox="0 0 24 24" aria-label="Missing Data">
+          <svg fill="none" stroke="gray" stroke-width="2" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0a9 9 0 0118 0z"/>
           </svg>`;
         title.innerText = "Missing Information";
@@ -90,22 +90,71 @@
         return;
       }
 
-      if (status === "2") {
-        // Payment success
-        iconDiv.innerHTML = `
-          <svg fill="none" stroke="#10b981" stroke-width="2" viewBox="0 0 24 24" aria-label="Payment Success">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2l4 -4m5 2a9 9 0 11-18 0a9 9 0 0118 0z"/>
-          </svg>`;
-        title.innerText = "Payment Successful";
-        message.innerText = "Thank you! Your transaction was completed successfully.";
-      } else {
-        // Payment failed
-        iconDiv.innerHTML = `
-          <svg fill="none" stroke="red" stroke-width="2" viewBox="0 0 24 24" aria-label="Payment Failed">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-          </svg>`;
-        title.innerText = "Payment Failed";
-        message.innerText = "Sorry, the transaction could not be completed. Please try again later.";
+      switch (status) {
+        case "0":
+          iconDiv.innerHTML = `
+            <svg fill="none" stroke="blue" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0a9 9 0 0118 0z"/>
+            </svg>`;
+          title.innerText = "Payment Created";
+          message.innerText = "Your payment is created but not yet processed.";
+          break;
+
+        case "1":
+          iconDiv.innerHTML = `
+            <svg fill="none" stroke="orange" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0a9 9 0 0118 0z"/>
+            </svg>`;
+          title.innerText = "Payment Pending";
+          message.innerText = "Your payment is still pending. Please wait.";
+          break;
+
+        case "2":
+          iconDiv.innerHTML = `
+            <svg fill="none" stroke="#10b981" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2l4 -4m5 2a9 9 0 11-18 0a9 9 0 0118 0z"/>
+            </svg>`;
+          title.innerText = "Payment Successful";
+          message.innerText = "Thank you! Your transaction was completed successfully.";
+          break;
+
+        case "3":
+        case "4":
+        case "5":
+          iconDiv.innerHTML = `
+            <svg fill="none" stroke="red" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>`;
+          title.innerText = "Payment Failed";
+          message.innerText = "Sorry, the transaction was not completed. Please try again.";
+          break;
+
+        case "6":
+        case "7":
+          iconDiv.innerHTML = `
+            <svg fill="none" stroke="purple" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M4 7v10a1 1 0 001 1h14a1 1 0 001-1V7M16 11l-4 4-4-4"/>
+            </svg>`;
+          title.innerText = "Payment Refunded";
+          message.innerText = "Your payment has been refunded or is pending refund.";
+          break;
+
+        case "8":
+          iconDiv.innerHTML = `
+            <svg fill="none" stroke="red" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+            </svg>`;
+          title.innerText = "Refund Failed";
+          message.innerText = "Refund process failed. Please contact support.";
+          break;
+
+        default:
+          iconDiv.innerHTML = `
+            <svg fill="none" stroke="gray" stroke-width="2" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0a9 9 0 0118 0z"/>
+            </svg>`;
+          title.innerText = "Unknown Status";
+          message.innerText = "We could not determine your payment status. Please check later.";
       }
     });
   </script>
