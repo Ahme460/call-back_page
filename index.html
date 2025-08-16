@@ -75,57 +75,37 @@
       const params = new URLSearchParams(window.location.search);
       const transactionId = params.get("transId");
       const status = params.get("statusId");
-      console.log("____________new_____________")
-      console.log(status)
 
       const iconDiv = document.getElementById("payment-icon");
       const title = document.getElementById("status-title");
       const message = document.getElementById("status-message");
 
-      if (transactionId) {
-        fetch("https://api.dinenorder.qa/customer/api/v1/status/transaction", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({ transactionId })
-        })
-        .then(res => res.json())
-        .then(data => {
-          if (status === "2") {
-            // Payment success
-            iconDiv.innerHTML = `
-              <svg fill="none" stroke="#10b981" stroke-width="2" viewBox="0 0 24 24" aria-label="Payment Success">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2l4 -4m5 2a9 9 0 11-18 0a9 9 0 0118 0z"/>
-              </svg>`;
-            title.innerText = "Payment Successful";
-            message.innerText = "Thank you! Your transaction was completed successfully.";
-          } else {
-            // Payment failed
-            iconDiv.innerHTML = `
-              <svg fill="none" stroke="red" stroke-width="2" viewBox="0 0 24 24" aria-label="Payment Failed">
-                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-              </svg>`;
-            title.innerText = "Payment Failed";
-            message.innerText = "Sorry, the transaction could not be completed. Please try again later.";
-          }
-        })
-        .catch(error => {
-          console.error("Error while checking transaction:", error);
-          iconDiv.innerHTML = `
-            <svg fill="none" stroke="orange" stroke-width="2" viewBox="0 0 24 24" aria-label="Server Error">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M12 5a7 7 0 100 14a7 7 0 000-14z"/>
-            </svg>`;
-          title.innerText = "Connection Error";
-          message.innerText = "Unable to connect to the server. Please try again later.";
-        });
-      } else {
+      if (!transactionId) {
         iconDiv.innerHTML = `
           <svg fill="none" stroke="gray" stroke-width="2" viewBox="0 0 24 24" aria-label="Missing Data">
             <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0a9 9 0 0118 0z"/>
           </svg>`;
         title.innerText = "Missing Information";
         message.innerText = "No transaction ID found in the link.";
+        return;
+      }
+
+      if (status === "2") {
+        // Payment success
+        iconDiv.innerHTML = `
+          <svg fill="none" stroke="#10b981" stroke-width="2" viewBox="0 0 24 24" aria-label="Payment Success">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2l4 -4m5 2a9 9 0 11-18 0a9 9 0 0118 0z"/>
+          </svg>`;
+        title.innerText = "Payment Successful";
+        message.innerText = "Thank you! Your transaction was completed successfully.";
+      } else {
+        // Payment failed
+        iconDiv.innerHTML = `
+          <svg fill="none" stroke="red" stroke-width="2" viewBox="0 0 24 24" aria-label="Payment Failed">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+          </svg>`;
+        title.innerText = "Payment Failed";
+        message.innerText = "Sorry, the transaction could not be completed. Please try again later.";
       }
     });
   </script>
