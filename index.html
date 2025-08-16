@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="ar" dir="rtl">
+<html lang="en">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>تم الدفع بنجاح</title>
+  <title>Payment Status</title>
   <style>
     body {
       margin: 0;
@@ -26,12 +26,11 @@
       max-width: 400px;
     }
 
-    .success-icon {
-      color: #10b981;
+    .icon {
       margin-bottom: 20px;
     }
 
-    .success-icon svg {
+    .icon svg {
       width: 80px;
       height: 80px;
     }
@@ -65,31 +64,25 @@
 <body>
 
   <div class="card">
-
-    <div class="success-icon" id="payment-icon" >
-      <!-- <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-        <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2l4 -4m5 2a9 9 0 11-18 0a9 9 0 0118 0z"/>
-      </svg> -->
-    </div>
-
-    <h1></h1>
-    <p></p>
-    <!-- <a href="/" class="button">الرجوع للرئيسية</a> -->
+    <div class="icon" id="payment-icon"></div>
+    <h1 id="status-title"></h1>
+    <p id="status-message"></p>
+    <a href="/" class="button">Back to Home</a>
   </div>
 
   <script>
     window.addEventListener("DOMContentLoaded", () => {
       const params = new URLSearchParams(window.location.search);
       const transactionId = params.get("transId");
-      const status = params.get('statusId');
-      for (const [key, value] of params.entries()) {
-  console.log(`${key}: ${value}`);
-}
-      //const transactionId = "b1210a39-218a-461c-8521-5aa3c8155a80"
-      if (transactionId) {
-        console.log("Transaction ID:", transactionId);
+      const status = params.get("statusId");
+      console.log("____________new_____________")
+      console.log(status)
 
-        // إرسال للـ backend
+      const iconDiv = document.getElementById("payment-icon");
+      const title = document.getElementById("status-title");
+      const message = document.getElementById("status-message");
+
+      if (transactionId) {
         fetch("https://api.dinenorder.qa/customer/api/v1/status/transaction", {
           method: "POST",
           headers: {
@@ -99,38 +92,42 @@
         })
         .then(res => res.json())
         .then(data => {
-          console.log("رد السيرفر:", data);
-          console.log(data['status']);
-
-          if (status == 2){
-            const iconDiv =document.getElementById("payment-icon");
+          if (status === "2") {
+            // Payment success
             iconDiv.innerHTML = `
-              <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2l4 -4m5 2a9 9 0 11-18 0a9 9 0 0118 0z"/>
-            </svg> 
-              `;
-            document.querySelector('h1').innerText="payment transaction success";
-            document.querySelector('p').innerText='thank you finished transaction successful payment';
-
-          } else{
-              const iconDiv = document.getElementById("payment-icon");
-              iconDiv.innerHTML = `
-                <svg fill="none" stroke="red" stroke-width="2" viewBox="0 0 24 24">
-                  <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
-                </svg>
-              `;
-            document.querySelector('h1').innerText ="payment transaction field";
-            document.querySelector('p').innerText ='thank you, transaction failed. Please try again later.';
+              <svg fill="none" stroke="#10b981" stroke-width="2" viewBox="0 0 24 24" aria-label="Payment Success">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M9 12l2 2l4 -4m5 2a9 9 0 11-18 0a9 9 0 0118 0z"/>
+              </svg>`;
+            title.innerText = "Payment Successful";
+            message.innerText = "Thank you! Your transaction was completed successfully.";
+          } else {
+            // Payment failed
+            iconDiv.innerHTML = `
+              <svg fill="none" stroke="red" stroke-width="2" viewBox="0 0 24 24" aria-label="Payment Failed">
+                <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
+              </svg>`;
+            title.innerText = "Payment Failed";
+            message.innerText = "Sorry, the transaction could not be completed. Please try again later.";
           }
         })
         .catch(error => {
-          console.error("خطأ أثناء إرسال المعاملة:", error);
+          console.error("Error while checking transaction:", error);
+          iconDiv.innerHTML = `
+            <svg fill="none" stroke="orange" stroke-width="2" viewBox="0 0 24 24" aria-label="Server Error">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01M12 5a7 7 0 100 14a7 7 0 000-14z"/>
+            </svg>`;
+          title.innerText = "Connection Error";
+          message.innerText = "Unable to connect to the server. Please try again later.";
         });
       } else {
-        console.warn("لم يتم العثور على transactionId في الرابط");
+        iconDiv.innerHTML = `
+          <svg fill="none" stroke="gray" stroke-width="2" viewBox="0 0 24 24" aria-label="Missing Data">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0a9 9 0 0118 0z"/>
+          </svg>`;
+        title.innerText = "Missing Information";
+        message.innerText = "No transaction ID found in the link.";
       }
-    }
-  );
+    });
   </script>
 
 </body>
