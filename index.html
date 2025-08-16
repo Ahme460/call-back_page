@@ -81,6 +81,7 @@
     window.addEventListener("DOMContentLoaded", () => {
       const params = new URLSearchParams(window.location.search);
       const transactionId = params.get("transId");
+      const status = params.get('statusId');
       for (const [key, value] of params.entries()) {
   console.log(`${key}: ${value}`);
 }
@@ -101,7 +102,7 @@
           console.log("رد السيرفر:", data);
           console.log(data['status']);
 
-          if (data.status){
+          if (status == 2){
             const iconDiv =document.getElementById("payment-icon");
             iconDiv.innerHTML = `
               <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
